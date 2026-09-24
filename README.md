@@ -44,7 +44,7 @@ Example stdio client configuration (e.g. for Claude Desktop):
 }
 ```
 
-Hosts that connect over HTTP can use `http://localhost:3001/mcp` after `npm run serve`.
+Hosts that connect over HTTP can use `http://localhost:3001/mcp` after `npm run serve`. Remote hosts such as claude.ai can't reach `localhost`. To use one with a local server, see [Testing in a remote host with a cloudflared tunnel](#4-test-in-a-remote-host-with-a-cloudflared-tunnel).
 
 ## Data access (CSP)
 
@@ -179,6 +179,63 @@ To test the error path, call `visualize-vitessce-config` with a config that has 
 ### 3. Test in a real host
 
 Add the server to an MCP Apps-capable host, such as Claude Desktop, using the stdio configuration above. Ask it to "show the Vitessce Visium example" or to visualize your own AnnData Zarr store. The data must be on an allowed origin (see [Data access](#data-access-csp)). basic-host is a reference implementation, so check sizing, fullscreen, and CSP behavior in each real host you target.
+
+### 4. Test in a remote host with a cloudflared tunnel
+
+Web-based hosts, such as claude.ai custom connectors, call your MCP server from their own infrastructure. They need a public HTTPS URL. During development, [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) can forward requests from a public URL to the server running on your machine.
+
+> [!WARNING]
+> A tunnel makes your local server reachable by anyone who has the URL. This server has no authentication. Only run the tunnel while you are testing, and stop it (Ctrl+C) when you are done.
+
+Install cloudflared (macOS shown; see the [downloads page](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) for other platforms):
+
+```bash
+brew install cloudflared
+```
+
+#### Quick tunnel (no Cloudflare account needed)
+
+In one terminal, start the server:
+
+```bash
+npm run dev      # or: npm run start
+```
+
+In a second terminal, start the tunnel:
+
+```bash
+cloudflared tunnel --url http://localhost:3001
+```
+
+cloudflared prints a URL such as `https://<random-words>.trycloudflare.com`. The MCP endpoint is that URL with `/mcp` added:
+
+```
+https://<random-words>.trycloudflare.com/mcp
+```
+
+Check that it responds, using the `MCP` helper from [step 1](#1-smoke-test-the-server) with the tunnel URL in place of `localhost:3001`. Then add the URL to the remote host. In claude.ai, add it as a custom connector in the connector settings.
+
+The development workflow is the same as for local testing:
+- **View changes** show up on the next tool call.
+- **Server changes** restart the server behind the same tunnel. Reconnect the host to refresh the tool list.
+
+Things to know about quick tunnels:
+- **The URL changes every time you restart `cloudflared`.** Update the connector each time.
+- **The first render of a tool call can be slow.** The ~23 MB UI resource has to travel through the tunnel. `npm run dev` makes it bigger, because the bundle is unminified with inline source maps. Use `npm run start` for a production-size bundle.
+- **Quick tunnels are for testing only.** Cloudflare doesn't guarantee their uptime.
+
+#### Named tunnel (stable hostname)
+
+To keep the same URL across restarts, use a named tunnel. This needs a Cloudflare account and a domain managed by Cloudflare:
+
+```bash
+cloudflared tunnel login                                   # authorize cloudflared for your account
+cloudflared tunnel create vitessce-mcp                     # create the tunnel (one time)
+cloudflared tunnel route dns vitessce-mcp mcp.example.com  # point a hostname at it (one time)
+cloudflared tunnel run --url http://localhost:3001 vitessce-mcp
+```
+
+The MCP endpoint is then `https://mcp.example.com/mcp`. A stable hostname matters if a data server only allows specific origins through CORS. Some hosts, including Claude, derive the view's origin from the MCP server URL (see `_meta.ui.domain` in the [CSP & CORS guide](https://github.com/modelcontextprotocol/ext-apps/blob/main/docs/csp-cors.md)), so a new URL means a new origin.
 
 ## Notes
 
