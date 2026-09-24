@@ -1,0 +1,100 @@
+:root {
+  color-scheme: light dark;
+
+  /*
+   * Fallbacks for host style variables used by this app.
+   * The host may provide these (and many more) via the host context.
+   */
+  --color-text-primary: light-dark(#1f2937, #f3f4f6);
+  --color-text-secondary: light-dark(#4b5563, #9ca3af);
+  --color-background-primary: light-dark(#ffffff, #1a1a1a);
+  --color-background-secondary: light-dark(#f3f4f6, #262626);
+  --color-border-primary: light-dark(#d1d5db, #404040);
+  --border-radius-md: 6px;
+  --border-radius-lg: 10px;
+  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --font-text-sm-size: 0.875rem;
+  --font-text-md-size: 1rem;
+  --font-text-md-line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-text-md-size);
+  line-height: var(--font-text-md-line-height);
+  color: var(--color-text-primary);
+  background: var(--color-background-primary);
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+
+.app {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--border-radius-lg);
+}
+
+.app.fullscreen {
+  border-radius: 0;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 8px;
+  font-size: var(--font-text-sm-size);
+  color: var(--color-text-secondary);
+  background: var(--color-background-secondary);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.toolbar .title {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.toolbar button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  padding: 1px 8px;
+  cursor: pointer;
+}
+
+.toolbar button:hover {
+  color: var(--color-text-primary);
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  padding: 16px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.status pre {
+  max-width: 100%;
+  overflow: auto;
+  white-space: pre-wrap;
+  text-align: left;
+}

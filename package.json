@@ -1,0 +1,45 @@
+{
+  "name": "vitessce-mcp-app",
+  "version": "1.0.0",
+  "description": "MCP App that renders Vitessce visualizations of single-cell and spatial omics data",
+  "scripts": {
+    "build": "tsc --noEmit && cross-env INPUT=mcp-app.html vite build",
+    "watch": "cross-env INPUT=mcp-app.html vite build --watch",
+    "serve": "tsx main.ts",
+    "serve:stdio": "tsx main.ts --stdio",
+    "start": "npm run build && npm run serve",
+    "dev": "cross-env NODE_ENV=development concurrently \"npm run watch\" \"tsx --watch main.ts\""
+  },
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/client": "^2.1.0",
+    "@modelcontextprotocol/express": "^2.0.1",
+    "@modelcontextprotocol/ext-apps": "^2.0.0",
+    "@modelcontextprotocol/node": "^2.1.0",
+    "@modelcontextprotocol/server": "^2.1.0",
+    "@react-three/xr": "^6.6.30",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "vitessce": "^4.0.8",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^7.3.6",
+    "vite-plugin-singlefile": "^2.3.3"
+  },
+  "private": "true"
+}
